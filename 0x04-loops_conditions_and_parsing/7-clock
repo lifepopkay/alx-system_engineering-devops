@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+#A bash script to print
+#display hours from 0 to 12
+#display minutes from 1 to 
+
+clock_hour=0
+min=1
+while [ "$clock_hour" -lt 24 ];
+do
+	echo "Hour: $clock_hour"
+	while [ "$min" -lt 60 ];
+	do
+		echo "$min"
+		min=$((min + 1))
+	done
+	clock_hour=$((clock_hour + 1))
+done
