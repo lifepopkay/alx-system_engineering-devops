@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+#script displays usrename, id and home directory path
+
+# Read the /etc/passwd file line by line
+while IFS=: read -r username userid homedir;
+do
+	if [[ -n "$username" ]] && [[ ! "$username" =~ ^# ]]; then
+		echo "$username"
+		echo "$userid"
+		echo "$homedir"
+		echo
+	fi
+done < /etc/passwd
