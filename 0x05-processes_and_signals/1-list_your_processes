@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+#print a list of currently running proocesses
+
+ps axjf
