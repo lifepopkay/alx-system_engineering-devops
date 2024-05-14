@@ -8,9 +8,14 @@ package { 'nginx':
 	ensure => 'installed'
 }
 
+exec { 'Nginx HTTP':
+	command => ufw allow 'Nginx HTTP',
+ 	provide => 'shell'
+}
+
 file { 'var/www/html/index.html':
 	require => Package['nginx'],
-	content => 'Hello World'
+	content => 'Hello World!'
 }
 
 exec {'redirect_me':
