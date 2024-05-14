@@ -9,8 +9,8 @@ package { 'nginx':
 }
 
 exec { 'Nginx HTTP':
-	command => ufw allow 'Nginx HTTP',
- 	provide => 'shell'
+	provide => 'shell',
+	command => 'sudo ufw allow "Nginx HTTP"',
 }
 
 file { 'var/www/html/index.html':
