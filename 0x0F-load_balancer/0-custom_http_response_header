@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+# duplicate web-01 to web-02
+# these scripts are an upgrade from the web-server scripts...
+
+
+
+echo "Installing Nginx"
+sudo apt-get -y update
+sudo apt-get install -y nginx
+
+# "configure the HTTP port"
+sudo ufw allow 'Nginx HTTP'
+
+# "Grant ownership permission"
+sudo chown -R "$USER":"$USER" /var/www/html
+sudo chmod -R 755 /var/www
+echo -e "Hello World!" > /var/www/html/index.nginx-debian.html
+
+# set to 404 error
+echo "Ceci n'est pas une page" >> /var/www/html/error_page_404.html
+sudo sed -i '25i\       error_page 404 /error_page_404.html;' /etc/nginx/sites-available/default
+
+sudo sed -i '24i\       rewrite ^/redirect_me https://www.youtube.com/watch?v=QH2-TGUlwu4 permanent;' /etc/nginx/sites-available/default
+
+sudo sed -i "52i\add_header X-Served-By $HOSTNAME always;" /etc/nginx/sites-available/default
+sudo service nginx start
