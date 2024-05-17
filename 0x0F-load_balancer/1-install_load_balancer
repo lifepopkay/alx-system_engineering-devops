@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+
+# Install and configure HAproxy on your lb-01 server.
+
+echo 'Installing HAproxy...'
+sudo apt-get update
+sudo apt-get install -y haproxy
+
+# configure the init file
+echo "ENABLED=1" >> /etc/default/haproxy
+
+server_config=\
+"
+defaults
+  mode http
+  timeout client 10s
+  timeout connect 5s
+  timeout server 10s
+  timeout http-request 10s
+	
+frontend life_frontend
+  bind *:80
+  default_backend life_backend
+	
+backend life_backend
+  balance roundrobin
+  server 428584-web-01 35.153.51.52:80 check
+  server 428584-web-02 34.229.189.140:80 check
+"
+
+echo "$server_config" | sudo dd status=none of=/etc/haproxy/haproxy.cfg
+
+echo "configured - Roundrobin On web-01 & web-02"
+
+if [ "$(pgrep -c haproxy)" -le 0 ]; then
+	sudo service haproxy start
+else
+	sudo service haproxy restart
+fi
