@@ -1,3 +1,19 @@
+sudo apt update
+sudo apt install snapd
+sudo apt-get remove certbot
+sudo apt-get install certbot
+
+DOMAIN='life-blog.tech' 
+
+sudo certbot certonly --standalone --preferred-challenges http --http-01-port 80 -d www.life-blog.tech
+sudo ls /etc/letsencrypt/live/$DOMAIN
+
+sudo mkdir -p /etc/haproxy/certs
+sudo -E bash -c 'cat /etc/letsencrypt/live/$DOMAIN/fullchain.pem /etc/letsencrypt/live/$DOMAIN/privkey.pem > /etc/haproxy/certs/$DOMAIN.pem'
+sudo chmod -R go-rwx /etc/haproxy/certs
+
+service_config=/
+"
 global
         log /dev/log    local0
         log /dev/log    local1 notice
@@ -37,14 +53,10 @@ defaults
         errorfile 503 /etc/haproxy/errors/503.http
         errorfile 504 /etc/haproxy/errors/504.http
 
-frontend http
+frontend httpandhttps
         bind *:80
-        http-request set-header X-Forwarded-Proto http
-        default_backend web-backend
-
-frontend www-https
         bind *:443 ssl crt /etc/haproxy/ssl/www.life-blog.tech.pem
-        http-request set-header X-Forwarded-Proto https
+        http-request set-header X-Forwarded-Proto https if { ssl_fc }
         default_backend web-backend
 
 backend web-backend
@@ -52,3 +64,5 @@ backend web-backend
         redirect scheme https if !{ ssl_fc }
         server 428584-web-01 35.153.51.52:80 check
         server 428584-web-02 34.229.189.140:80 check
+"
+"$service_config" > /etc/haproxy/haproxy.cfg
