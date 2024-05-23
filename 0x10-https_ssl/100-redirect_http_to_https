@@ -1,27 +1,47 @@
-global
-        log /dev/log    local0
-        log /dev/log    local1 notice
-        chroot /var/lib/haproxy
-        stats socket /run/haproxy/admin.sock mode 660 level admin expose-fd listeners
-        stats timeout 30s
-        user haproxy
-        group haproxy
-        daemon
+#!/usr/bin/env bash
 
-        # Default SSL material locations
-        ca-base /etc/ssl/certs
-        crt-base /etc/ssl/private
+sudo apt update
+sudo apt-get install -y certbot haproxy
 
-        # See: https://ssl-config.mozilla.org/#server=haproxy&server-version=2.0.3&config=intermediate
-        ssl-default-bind-ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-S>
-        ssl-default-bind-ciphersuites TLS_AES_128_GCM_SHA256:TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256
-        ssl-default-bind-options ssl-min-ver TLSv1.2 no-tls-tickets
+DOMAIN='life-blog.tech'
 
+sudo certbot certonly --standalone --preferred-challenges http --http-01-port 80 -d www.life-blog.tech
+
+ls /etc/letsencrypt/live/www.life-blog.tech/
+
+# Define paths to the certificate and key
+CERT_PATH="/etc/letsencrypt/live/www.life-blog.tech/fullchain.pem"
+KEY_PATH="/etc/letsencrypt/live/www.life-blog.tech/privkey.pem"
+COMBINED_PATH="/etc/haproxy/certs/$DOMAIN.pem"
+DH_PARAM_PATH="/etc/haproxy/dhparam.pem"
+
+# Ensure the certificate and key files exist
+if [ ! -f "$CERT_PATH" ] || [ ! -f "$KEY_PATH" ]; then
+    echo "Error: Certificate or key file not found."
+    exit 1
+fi
+
+
+# Combine the certificate and private key into one file
+sudo cat "$CERT_PATH" "$KEY_PATH" > "$COMBINED_PATH
+
+
+# Generate DH parameters
+sudo openssl dhparam -out "$DH_PARAM_PATH" 2048
+
+# Append DH parameters to the combined certificate file
+sudo cat "$DH_PARAM_PATH" >> "$COMBINED_PATH"
+
+sudo chmod -R go-rwx /etc/haproxy/certs
+
+# configure HAProxy
+sudo tee /etc/haproxy/haproxy.cfg > /dev/null <<EOL
 defaults
         log     global
         mode    http
         option  httplog
         option  dontlognull
+        option  forwardfor
         timeout connect 5000
         timeout client  50000
         timeout server  50000
@@ -33,19 +53,17 @@ defaults
         errorfile 503 /etc/haproxy/errors/503.http
         errorfile 504 /etc/haproxy/errors/504.http
 
-frontend clickviral-frontend
+frontend httpandhttps
         bind *:80
-        mode http
+        bind *:443 ssl crt /etc/haproxy/certs/life-blog.tech.pem
+        http-request set-header X_Forwarded-Proto https if { ssl_fc }
         http-request redirect scheme https code 301 unless { ssl_fc }
-        http-request set-header X_Forwarded-Proto http
-        default_backend clickviral-backend
+        default_backend web-backend
 
-frontend clickviral-frontend-https
-        bind *:443 ssl crt /etc/haproxy/certs/clickviral.tech.pem
-        http-request set-header X-Forwarded-Proto https
-        default_backend clickviral-backend
-
-backend clickviral-backend
+backend web-backend
         balance roundrobin
         server 428584-web-01 35.153.51.52:80 check
         server 428584-web-02 34.229.189.140:80 check
+EOL
+
+sudo systemctl restart haproxy
