@@ -1,0 +1,3 @@
+server-id        = 1
+log_bin          = /var/log/mysql/mysql-bin.log # binary log - record changes made to the db in binary formart
+binlog_do_db     = tyrell_corp
