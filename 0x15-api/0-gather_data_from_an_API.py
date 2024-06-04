@@ -4,9 +4,9 @@
     about his/her TODO list for a given
     employee ID
 """
-# from urllib import request
 import requests
 from sys import argv
+
 
 emp_id = argv[1]
 base_url = 'https://jsonplaceholder.typicode.com/'
