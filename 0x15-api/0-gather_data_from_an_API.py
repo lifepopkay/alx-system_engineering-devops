@@ -26,7 +26,7 @@ tasks = []
 for i in emp_todo:
     if i['completed'] is True:
         tasks.append(i['title'])
- 
+
 done_task = len(tasks)
 print(f'Employee {name} is done with tasks({done_task}/{all_tasks}): ')
 for i in tasks:
