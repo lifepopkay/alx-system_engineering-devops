@@ -9,12 +9,14 @@ import requests
 from sys import argv
 
 emp_id = argv[1]
-base_url = 'https://jsonplaceholder.typicode.com/todos'
-url_todo = f'{base_url}/?userId={emp_id}'
+base_url = 'https://jsonplaceholder.typicode.com/'
+url_todo = f'{base_url}todos/?userId={emp_id}'
 url_name = f'{base_url}/users/?id={emp_id}'
 
 # Get employee name
-emp_name = requests.get(url_name).json().get('name')
+emp_name = requests.get(url_name).json()
+for attr in emp_name:
+    name = attr['name']
 
 # Get todo list
 emp_todo = requests.get(url_todo).json()
@@ -26,6 +28,6 @@ for i in emp_todo:
         tasks.append(i['title'])
  
 done_task = len(tasks)
-print(f'Employee {emp_name} is done with ({done_task}/{all_tasks})')
+print(f'Employee {name} is done with tasks({done_task}/{all_tasks}): ')
 for i in tasks:
     print(f'\t {i}')
