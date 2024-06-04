@@ -15,8 +15,6 @@ def get_data(employee_id):
 
     # Get employee name
     emp_name = requests.get(url_name).json()[0]['name']
-    for attr in emp_name:
-        name = attr['name']
 
     # Get todo list
     emp_todo = requests.get(url_todo).json()
@@ -28,9 +26,9 @@ def get_data(employee_id):
             tasks.append(i['title'])
 
     done_task = len(tasks)
-    print(f'Employee {name} is done with tasks({done_task}/{all_tasks}):')
+    print(f'Employee {emp_name} is done with tasks({done_task}/{all_tasks}):')
     for i in tasks:
-        print(f'\t{i}')
+        print(f' \t{i}')
 
 
 if __name__ == "__main__":
