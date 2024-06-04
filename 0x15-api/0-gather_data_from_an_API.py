@@ -7,6 +7,7 @@
 import requests
 from sys import argv
 
+
 def get_data(employee_id):
     base_url = 'https://jsonplaceholder.typicode.com/'
     url_todo = f'{base_url}todos/?userId={employee_id}'
@@ -30,7 +31,7 @@ def get_data(employee_id):
     print(f'Employee {name} is done with tasks({done_task}/{all_tasks}):')
     for i in tasks:
         print(f'\t {i}')
-    
+
+
 if __name__ == "__main__":
     get_data(argv[1])
-        
