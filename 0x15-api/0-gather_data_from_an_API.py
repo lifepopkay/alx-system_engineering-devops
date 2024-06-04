@@ -7,27 +7,30 @@
 import requests
 from sys import argv
 
+def get_data(employee_id):
+    base_url = 'https://jsonplaceholder.typicode.com/'
+    url_todo = f'{base_url}todos/?userId={employee_id}'
+    url_name = f'{base_url}/users/?id={employee_id}'
 
-emp_id = argv[1]
-base_url = 'https://jsonplaceholder.typicode.com/'
-url_todo = f'{base_url}todos/?userId={emp_id}'
-url_name = f'{base_url}/users/?id={emp_id}'
+    # Get employee name
+    emp_name = requests.get(url_name).json()
+    for attr in emp_name:
+        name = attr['name']
 
-# Get employee name
-emp_name = requests.get(url_name).json()
-for attr in emp_name:
-    name = attr['name']
+    # Get todo list
+    emp_todo = requests.get(url_todo).json()
 
-# Get todo list
-emp_todo = requests.get(url_todo).json()
+    all_tasks = len(emp_todo)
+    tasks = []
+    for i in emp_todo:
+        if i['completed'] is True:
+            tasks.append(i['title'])
 
-all_tasks = len(emp_todo)
-tasks = []
-for i in emp_todo:
-    if i['completed'] is True:
-        tasks.append(i['title'])
-
-done_task = len(tasks)
-print(f'Employee {name} is done with tasks({done_task}/{all_tasks}): ')
-for i in tasks:
-    print(f'\t {i}')
+    done_task = len(tasks)
+    print(f'Employee {name} is done with tasks({done_task}/{all_tasks}):')
+    for i in tasks:
+        print(f'\t {i}')
+    
+if __name__ == "__main__":
+    get_data(argv[1])
+        
