@@ -38,14 +38,14 @@ def get_data(employee_id):
     for detail in details:
         status = detail.get('completed')
         title = detail.get('title')
-        dict_task = {'task':title, 'completed':status, 'username':USERNAME}
+        dict_task = {'task': title, 'completed': status, 'username': USERNAME}
         output.append(dict_task)
     return output
 
 
 if __name__ == "__main__":
-    output = {str(argv[1]):get_data(argv[1])}
+    output = {str(argv[1]): get_data(argv[1])}
     file = f'{argv[1]}.json'
-    
+
     with open(file, 'w') as jsonfile:
         json.dump(output, jsonfile, indent=4)
