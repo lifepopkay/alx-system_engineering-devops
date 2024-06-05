@@ -34,7 +34,7 @@ def get_data(employee_id):
     # Get task details
     response = requests.get(url_todo).json()
     details = response
-    output = []
+    output = {}
     for detail in details:
         status = detail.get('completed')
         title = detail.get('title')
