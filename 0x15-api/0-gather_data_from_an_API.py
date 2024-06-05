@@ -7,14 +7,15 @@
 import requests
 from sys import argv
 
+
 def to_dict(data):
     new_list = {}
     for item in data:
         for key, val in item.items():
             new_list[key] = val
         return new_list
-            
-        
+
+
 def get_data(employee_id):
     base_url = 'https://jsonplaceholder.typicode.com/'
     url_todo = f'{base_url}todos/?userId={employee_id}'
