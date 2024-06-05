@@ -20,6 +20,7 @@ def to_dict(data):
             new_list[key] = val
         return new_list
 
+
 def get_data(employee_id):
     base_url = 'https://jsonplaceholder.typicode.com/'
     url_todo = f'{base_url}todos/?userId={employee_id}'
@@ -36,7 +37,7 @@ def get_data(employee_id):
     for detail in details:
         status = detail.get('completed')
         title = detail.get('title')
-        dict_task = {'task':title, 'completed':status, 'username':USERNAME}
+        dict_task = {'username': USERNAME, 'task': title, 'completed': status}
         output.append(dict_task)
     return output
 
@@ -44,9 +45,9 @@ def get_data(employee_id):
 if __name__ == "__main__":
     all_employees = {}
     for i in range(1, 11):
-        employee = {str(i):get_data(i)}
+        employee = {str(i): get_data(i)}
         all_employees.update(employee)
     file = 'todo_all_employees.json'
-    
+
     with open(file, 'w') as jsonfile:
         json.dump(all_employees, jsonfile, indent=4)
