@@ -47,7 +47,7 @@ if __name__ == "__main__":
     file = f'{argv[1]}.csv'
 
     try:
-        with open(file,'w') as csvfile:
+        with open(file, 'w') as csvfile:
             writer = csv.writer(csvfile, quoting=csv.QUOTE_ALL)
             for _ in output:
                 writer.writerow(_)
