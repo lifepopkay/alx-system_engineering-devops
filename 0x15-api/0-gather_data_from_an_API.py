@@ -22,8 +22,8 @@ def get_data(employee_id):
     url_name = f'{base_url}/users/?id={employee_id}'
 
     # Get employee name
-    emp_name = requests.get(url_name).json()
-    name = to_dict(emp_name).get('name')
+    response = requests.get(url_name).json()
+    EMPLOYEE_NAME = to_dict(response).get('name')
 
     # Get todo list
     emp_todo = requests.get(url_todo).json()
@@ -34,7 +34,8 @@ def get_data(employee_id):
             tasks.append(i['title'])
 
     done_task = len(tasks)
-    print(f'Employee {name} is done with tasks({done_task}/{all_tasks}):')
+    print('Employee {} is done with tasks({}/{}):'
+          .format(EMPLOYEE_NAME,done_task,all_tasks))
     for i in tasks:
         print(f'\t {i}')
 
