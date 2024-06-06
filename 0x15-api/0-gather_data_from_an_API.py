@@ -35,7 +35,7 @@ def get_data(employee_id):
 
     done_task = len(tasks)
     print('Employee {} is done with tasks({}/{}):'
-          .format(EMPLOYEE_NAME,done_task,all_tasks))
+          .format(EMPLOYEE_NAME, done_task, all_tasks))
     for i in tasks:
         print(f'\t {i}')
 
